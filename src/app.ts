@@ -1,10 +1,10 @@
 import admin from "firebase-admin"
+import axios from "axios"
 import config from "./config.json"
 import express from "express"
-import { OBJECT, STRING, validate } from "validate-any"
+import { OBJECT, STRING, validate_express } from "validate-any"
 import { Octokit } from "@octokit/core"
 import { useTryAsync } from "no-try"
-import axios from "axios"
 
 const app = express()
 const PORT = 4567
@@ -14,22 +14,17 @@ const db = admin.firestore()
 
 app.use(express.json())
 
-app.post("/create-webhook", async (req, res) => {
-	const {
-		success,
-		errors,
-		data: body
-	} = validate(
-		req.body,
+app.post(
+	"/create-webhook",
+	validate_express(
 		OBJECT({
 			username: STRING(),
 			repository: STRING(),
 			access_token: STRING()
 		})
-	)
-
-	if (success) {
-		const { username, repository, access_token } = body!
+	),
+	async (req, res) => {
+		const { username, repository, access_token } = req.body
 		const octokit = new Octokit({ auth: access_token })
 
 		octokit
@@ -44,12 +39,10 @@ app.post("/create-webhook", async (req, res) => {
 					content_type: "json"
 				}
 			})
-			.then(() => res.status(200).end())
+			.then(() => res.status(201).end())
 			.catch(err => res.status(400).send(err))
-	} else {
-		res.status(400).json(errors)
 	}
-})
+)
 
 app.post("/handle-commit", async (req, res) => {
 	const commits = req.body.commits as Record<string, any>[] | undefined
@@ -79,6 +72,33 @@ app.post("/handle-commit", async (req, res) => {
 		res.end()
 	}
 })
+
+app.post(
+	"/repos",
+	validate_express(
+		OBJECT({
+			username: STRING()
+		})
+	),
+	async (req, res) => {
+		const { username } = req.body
+		const octokit = new Octokit()
+
+		octokit
+			.request("GET /users/{username}/repos", {
+				username
+			})
+			.then(({ data: repos }) => {
+				res.status(200).send(
+					repos.map(repo => ({
+						name: repo.name,
+						description: repo.description
+					}))
+				)
+			})
+			.catch(err => res.status(400).send(err))
+	}
+)
 
 app.get("/start-oauth", (req, res) => {
 	const url = new URL("https://github.com/login/oauth/authorize")
