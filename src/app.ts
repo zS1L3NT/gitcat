@@ -103,8 +103,7 @@ app.post(
 app.get("/start-oauth", (req, res) => {
 	const url = new URL("https://github.com/login/oauth/authorize")
 	url.searchParams.set("client_id", "d798948d956d46016e47")
-	url.searchParams.set("redirect_uri", "https://0f0f-58-182-54-53.ngrok.io/handle-oauth")
-	url.searchParams.set("login", (req.query.login as string) || "")
+	url.searchParams.set("redirect_uri", "https://gitcat.zectan.com/handle-oauth")
 	url.searchParams.set("scope", "repo, admin:repo_hook")
 	res.redirect(url.href)
 })
@@ -126,7 +125,7 @@ app.get("/handle-oauth", async (req, res) => {
 		)
 		.then(res_ => {
 			const { access_token } = res_.data
-			const url = new URL("https://www.gitcat.com")
+			const url = new URL("cat://www.gitcat.com")
 			url.searchParams.set("access_token", encodeURIComponent(access_token))
 			res.redirect(url.href)
 		})
