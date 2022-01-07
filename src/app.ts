@@ -39,7 +39,7 @@ app.post(
 					content_type: "json"
 				}
 			})
-			.then(() => res.status(201).end())
+			.then(() => res.status(201).send({}))
 			.catch(err => res.status(400).send(err))
 	}
 )
@@ -95,6 +95,28 @@ app.post(
 						description: repo.description
 					}))
 				)
+			})
+			.catch(err => res.status(400).send(err))
+	}
+)
+
+app.post(
+	"/user",
+	validate_express(
+		OBJECT({
+			access_token: STRING()
+		})
+	),
+	async (req, res) => {
+		axios
+			.get("https://api.github.com/user", {
+				headers: { Authorization: `token ${req.body.access_token}` }
+			})
+			.then(user => {
+				res.status(200).send({
+					id: user.data.id,
+					username: user.data.login
+				})
 			})
 			.catch(err => res.status(400).send(err))
 	}
