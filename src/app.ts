@@ -86,7 +86,8 @@ app.post(
 
 		octokit
 			.request("GET /users/{username}/repos", {
-				username
+				username,
+				per_page: 100
 			})
 			.then(({ data: repos }) => {
 				res.status(200).send(
