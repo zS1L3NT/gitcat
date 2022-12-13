@@ -1,0 +1,3 @@
+[submodule "android-gitcat"]
+	path = android-gitcat
+	url = https://github.com/jyorien/GitCat
