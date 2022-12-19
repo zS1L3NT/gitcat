@@ -4,7 +4,7 @@
 
 Keep forgetting to commit? Feed your commits to GitCat.
 
-Every commit you make on GitHub will give you credits to buy things for GitCat. @jyorien and I built this project together as a submission for the [HacknRoll 2021](https://hacknroll.nushackers.org/) hackathon.
+Every commit you make on GitHub will give you credits to buy things for GitCat. [@jyorien](https://github.com/jyorien) and I built this project together as a submission for the [HacknRoll 2021](https://hacknroll.nushackers.org/) hackathon.
 
 View the video demonstration of the application [here](https://youtu.be/ZUn2QRY1Pqo).
 
